@@ -59,6 +59,48 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/data/<int:id>', methods=['GET'])
+def get_data_by_id(id):
+    try:
+        # Fetch data from the database for the provided ID
+        entry = FormData.query.filter_by(id=id).first()
+        if not entry:
+            return jsonify({'error': 'Entry not found'}), 404
+        # Serialize the data to JSON format
+        serialized_data = {
+            'id': entry.id,
+            'vendorName': entry.vendorName,
+            'lntPoNumber': entry.lntPoNumber,
+            'projectNumber': entry.projectNumber,
+            'projectName': entry.projectName,
+            'qapStatus': entry.qapStatus,
+            'customerName': entry.customerName,
+            'inspectionCallLetterDate': entry.inspectionCallLetterDate,
+            'inspectionCompletedDate': entry.inspectionCompletedDate,
+            'customerClearance': entry.customerClearance
+        }
+        return jsonify(serialized_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/edited-info', methods=['POST'])
+def edit_form_data():
+    try:
+        data = request.json
+        id = data.get('id')
+        # Fetch the existing entry from the database
+        entry = FormData.query.filter_by(id=id).first()
+        if not entry:
+            return jsonify({'error': 'Entry not found'}), 404
+        # Update the entry with new data
+        for key, value in data.items():
+            setattr(entry, key, value)
+        db.session.commit()
+        return jsonify({'message': 'Form data edited successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

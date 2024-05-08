@@ -35,3 +35,124 @@
     height: 24px;
     vertical-align: middle;
 }
+
+
+
+/* Add this CSS to your stylesheet */
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Create 4 columns with equal width */
+    gap: 2vw; /* Add some gap between cards */
+    justify-content: space-between;
+    height: fit-content;
+  }
+  
+  .card {
+    position: relative;
+    border: #343434 2px solid;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 20px 30px;
+    width: 17vw;
+    height: 65vh;
+  }
+  
+  .card h2 {
+    margin-top: 0;
+  }
+  
+  /* .card-buttons-con {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    align-items: center;
+    
+  } */
+  .card-buttons-con {
+    position: absolute;
+    bottom: 0;
+    justify-content: space-between;
+    left: 0; /* Adjust left position if needed */
+    width: 100%; /* Occupy full width of the card */
+    text-align: center; /* Align buttons to the center */
+    margin-top: 10px;
+  }
+  .card-button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 4px;
+
+  }
+  
+  .card-button:hover {
+    background-color: #45a049;
+  }
+  
+
+
+  #searchcon{
+    width: 20vw;
+    margin-left: 3vw;
+    margin-top: 12vh;
+  }
+
+
+.card-button{
+    background-color: #343434; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    transition: background-color 0.5s;
+    border: #34343400 2px solid;
+}
+.card-button:hover {
+    background-color: #ffffff; /* Darker Green */
+    color: black;
+    border: #343434 2px solid;
+}
+#infocon{
+    margin: 10px;
+}
+.searchicon{
+    height: 15px;
+   
+}
+#searchcon{
+    border-radius: 10px;
+    border: 2px #333 solid;
+}
+.searchbtn{
+    background-color: #ffffff; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    transition: background-color 0.5s;
+    border: #34343400 2px solid;
+}
+.searchbtn:hover{
+    background-color: #7b7b7b; /* Darker Green */
+    color: black;
+    border: #343434 2px solid;
+}

@@ -2,14 +2,21 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/navbar';
 import { Link } from 'react-router-dom';
 import './home.css';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
-  // State to store the fetched data
   const [data, setData] = useState([]);
-  // State for loading and error handling
+  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState(null);
 
+  const handleDeleteConfirmation = (id) => {
+    setShowConfirmation(true);
+    setDeleteItemId(id);
+  };
   useEffect(() => {
     // Fetch data from the backend when the component mounts
     fetchData();
@@ -31,6 +38,61 @@ function Home() {
       setIsLoading(false);
     }
   };
+  const deleteEntry = (id) => {
+    // Call the backend to delete the entry with the specified ID
+    fetch(`http://localhost:5000/delete/${id}`, {
+      method: 'DELETE',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to delete entry');
+        }
+        console.log(`Deleted item with ID ${id}`);
+        // Optionally, update the UI or fetch data again after deletion
+      })
+      .catch((error) => {
+        console.error('Error deleting item:', error);
+        // Optionally, handle errors
+      });
+  };
+  const handleCancel = () => {
+    // Close the confirmation dialog
+    setShowConfirmation(false);
+  };
+
+  const navigate = useNavigate();
+  const handleEdit = (id) => {
+    // Perform actions for editing
+    navigate(`/edit/${id}`)
+  };
+  
+  const handleOpen = (id) => {
+    // Perform actions for opening
+    navigate(`/open/${id}`);
+  };
+  
+  const handleDelete = (id) => {
+    // Perform actions for deleting
+    console.log(`Deleting item with ID ${id}`);
+    // Call the function to delete the entry from the backend
+    deleteEntry(id);
+    // Close the confirmation dialog
+    setShowConfirmation(false);
+  };
+
+  const handleSearch = () => {
+    const filtered = data.filter((item) =>
+      Object.values(item).some(
+        (value) =>
+          value &&
+          value
+            .toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+      )
+    );
+    setFilteredData(filtered.sort((a, b) => a.vendorName.localeCompare(b.vendorName)));
+  };
 
   // Function to render cards dynamically
   const renderCards = () => {
@@ -39,35 +101,67 @@ function Home() {
     } else if (error) {
       return <div>Error loading: {error}</div>;
     } else {
-      return data.map((item) => (
-        <div key={item.id} className="card">
-          <h2>{item.vendorName}</h2>
-          <p>L&T PO Number: {item.lntPoNumber}</p>
-          <p>Project Number: {item.projectNumber}</p>
-          <p>Project Name: {item.projectName}</p>
-          <p>QAP Status: {item.qapStatus}</p>
-          <p>Customer Name: {item.customerName}</p>
-          <p>Inspection Call Letter Date: {item.inspectionCallLetterDate}</p>
-          <p>Inspection Completed Date: {item.inspectionCompletedDate}</p>
-          <p>Customer Clearance: {item.customerClearance}</p>
-          <div className="buttons">
-            <button>Edit</button>
-            <button>Delete</button>
-            <button>Open</button>
-          </div>
+      const cardsToRender = filteredData.length > 0 ? filteredData : data;
+      return (
+        <div className="card-container">
+          {cardsToRender.map((item) => (
+            <div key={item.id} className="card">
+              <h2>{item.vendorName}</h2>
+              <hr />
+              <div id="infocon">
+                <p>L&T PO Number: {item.lntPoNumber}</p>
+                <p>Project Number: {item.projectNumber}</p>
+                <p>Project Name: {item.projectName}</p>
+                <p>QAP Status: {item.qapStatus}</p>
+                <p>Customer Name: {item.customerName}</p>
+                <p>Inspection Call Letter Date: {item.inspectionCallLetterDate}</p>
+                <p>Inspection Completed Date: {item.inspectionCompletedDate}</p>
+                <p>Customer Clearance: {item.customerClearance}</p>
+              </div>
+              <div className="card-buttons-con">
+                <hr />
+                <button className="card-button" onClick={() => handleEdit(item.id)}>Edit</button>
+                <button className="card-button" onClick={() => handleOpen(item.id)}>Open</button>
+                <button className="card-button" onClick={() => handleDelete(item.id)}>Delete</button>
+              </div>
+            </div>
+          ))}
         </div>
-      ));
+      );
     }
   };
+  
+  
 
   return (
     <>
       <Navbar />
       <div>
-        <Link to="/new-entry">
-          <button className="entry-button">New Data Entry</button>
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Link to="/new-entry">
+            <button className="entry-button">New Data Entry</button>
+          </Link>
+          <div >
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              id="searchcon"
+            />
+              <button onClick={handleSearch} className="searchbtn">
+                <img src="./search-icon.svg" alt="Search icon" className="searchicon"/>
+              </button>
+            </div>
+        </div>
       </div>
+      {showConfirmation && (
+        <div className="confirmation-box">
+          <p>Are you sure you want to delete this entry?</p>
+          <button onClick={() => handleDelete(deleteItemId)}>Yes</button>
+          <button onClick={handleCancel}>Cancel</button>
+        </div>
+      )}
       <div className="card-container">
         {/* Render the cards */}
         {renderCards()}
