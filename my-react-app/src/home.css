@@ -1,0 +1,37 @@
+#datentrybutton{
+    margin-left: 3vw;
+    margin-top: 10vh;
+}
+
+.entry-button {
+    background-color: #343434; /* Green */
+    border: none;
+    color: white;
+    padding: 7px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 3vw;
+    margin-top: 10vh;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    border: #34343400 2px solid;
+}
+
+.entry-button:hover {
+    background-color: #ffffff; /* Darker Green */
+    color: black;
+    border: #343434 2px solid;
+}
+
+.icon {
+    margin-right: 8px;
+}
+
+.pencil-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
