@@ -1,0 +1,24 @@
+{
+  "name": "inspection-record-app",
+  "version": "1.0.1",
+  "description": "",
+  "main": "electron.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^30.0.3",
+    "electron-builder": "^22.11.7"
+  },
+  "build": {
+    "appId": "com.example.yourapp",
+    "win": {
+      "icon": "appicon/icon.ico"
+    }
+  }
+}
