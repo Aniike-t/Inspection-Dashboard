@@ -1,9 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
-
-
+import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
@@ -100,7 +99,74 @@ def edit_form_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/data/<int:id>', methods=['GET'])
+def get_entry_data(id):
+    try:
+        # Fetch entry data from the database based on ID
+        entry = FormData.query.get(id)
+        if not entry:
+            return jsonify({'error': 'Entry not found'}), 404
+        # Serialize the data to JSON format
+        serialized_data = {
+            'id': entry.id,
+            'vendorName': entry.vendorName,
+            'lntPoNumber': entry.lntPoNumber,
+            'projectNumber': entry.projectNumber,
+            'projectName': entry.projectName,
+            'atomDescription': entry.atomDescription,
+            'qapStatus': entry.qapStatus,
+            'customerName': entry.customerName,
+            'inspectionCallLetterDate': entry.inspectionCallLetterDate,
+            'inspectionCompletedDate': entry.inspectionCompletedDate,
+            'customerClearance': entry.customerClearance
+        }
+        return jsonify(serialized_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
+@app.route('/delete/<int:id>', methods=['DELETE'])
+def delete_entry(id):
+    try:
+        # Find the entry by ID
+        entry = FormData.query.get(id)
+        if not entry:
+            return jsonify({'error': 'Entry not found'}), 404
+        # Delete the entry from the database
+        db.session.delete(entry)
+        db.session.commit()
+        return jsonify({'message': 'Entry deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/download-xlsx')
+def download_xlsx():
+    try:
+        # Query the form data from the database
+        form_data = FormData.query.all()
+
+        # Convert the form data to a pandas DataFrame
+        data = pd.DataFrame([{
+            'Vendor Name': entry.vendorName,
+            'L&T PO Number': entry.lntPoNumber,
+            'Project Number': entry.projectNumber,
+            'Project Name': entry.projectName,
+            'Atom Description': entry.atomDescription,
+            'QAP Status': entry.qapStatus,
+            'Customer Name': entry.customerName,
+            'Inspection Call Letter Date': entry.inspectionCallLetterDate,
+            'Inspection Completed Date': entry.inspectionCompletedDate,
+            'Customer Clearance': entry.customerClearance
+        } for entry in form_data])
+
+        # Generate the XLSX file
+        file_path = 'form_data.xlsx'
+        data.to_excel(file_path, index=False)
+
+        # Send the XLSX file as a response
+        return send_file(file_path, as_attachment=True)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

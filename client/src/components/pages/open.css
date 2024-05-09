@@ -1,0 +1,27 @@
+.container {
+    margin-top: 9vh;
+    display: flex; /* Allow horizontal layout for conditionally displayed content */
+    flex-direction: column; /* Stack items on top of each other */
+ /* Center content horizontally within the container */
+    padding: 1rem; /* Add some padding for visual separation */
+    border: 1px solid #ddd; /* Optional: Create a subtle border */
+    border-radius: 5px; /* Add rounded corners for a softer look */
+  }
+  
+  .container > div { /* Target all child divs within the container */
+    margin: 0.5rem 0; /* Add some vertical spacing between content sections */
+  }
+  
+  .entry-details {
+    border: 1px solid #ddd; /* Optional: Create a border for entry details */
+    border-radius: 5px; /* Add rounded corners for entry details */
+    padding: 1rem; /* Add some padding within entry details */
+  }
+  
+  h2 {
+    margin-bottom: 0.5rem; /* Add some bottom margin for the heading */
+  }
+  
+  p {
+    margin-bottom: 0.25rem; /* Add a small margin between paragraphs */
+  }

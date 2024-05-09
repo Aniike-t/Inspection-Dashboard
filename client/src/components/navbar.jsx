@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './navbar.css';
+import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
+  const Navigate =useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -11,11 +13,13 @@ function Navbar() {
 
     return () => clearInterval(interval);
   }, []);
-
+  function handleHomePage(){
+    Navigate('/')
+  }
   return (
     <>
         <nav id='navbar'>
-            <p id='dashboardname'>Dashboard</p>
+            <p id='dashboardname' onClick={handleHomePage}>Dashboard</p>
             <p id='datetime'>{currentTime.toLocaleTimeString()}<br></br> {currentTime.toLocaleDateString()}</p>
         </nav>
     </>

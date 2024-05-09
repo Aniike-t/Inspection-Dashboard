@@ -1,0 +1,36 @@
+/* BottomNavbar.css */
+
+.navbar {
+    position: fixed;
+    bottom: -40px; /* Initially hidden below the viewport */
+    width: 80%;
+    margin-left: 10vw;
+    background-color: #4242422f;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    height: 7vh;
+    border-radius: 10px 10px 0px 0px;
+    transition: 0.5s ease; /* Transition effect for sliding */
+}
+
+.navbar:hover {
+    background-color:#424242; 
+    transition:  0.5s ease;
+    transform: translateY(-40px); 
+}
+
+.dwnbutton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4242422f;
+    color: #fff;
+    margin-top: 0px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s; /* Transition effect for button color change */
+}
+
+.dwnbutton:hover {
+    background-color: #777; /* Change button background color on hover */
+}

@@ -3,6 +3,7 @@ import Navbar from './components/navbar';
 import { Link } from 'react-router-dom';
 import './home.css';
 import { useNavigate } from 'react-router-dom';
+import BottomNavbar from './components/bottomnavbar';
 
 function Home() {
   const [data, setData] = useState([]);
@@ -12,11 +13,14 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
+  const [qapStatusFilter, setQapStatusFilter] = useState('');
+  const [customerClearanceFilter, setCustomerClearanceFilter] = useState('');
 
   const handleDeleteConfirmation = (id) => {
     setShowConfirmation(true);
     setDeleteItemId(id);
   };
+
   useEffect(() => {
     // Fetch data from the backend when the component mounts
     fetchData();
@@ -38,6 +42,7 @@ function Home() {
       setIsLoading(false);
     }
   };
+
   const deleteEntry = (id) => {
     // Call the backend to delete the entry with the specified ID
     fetch(`http://localhost:5000/delete/${id}`, {
@@ -55,29 +60,46 @@ function Home() {
         // Optionally, handle errors
       });
   };
+
   const handleCancel = () => {
     // Close the confirmation dialog
     setShowConfirmation(false);
   };
 
   const navigate = useNavigate();
+
   const handleEdit = (id) => {
     // Perform actions for editing
-    navigate(`/edit/${id}`)
+    navigate(`/edit/${id}`);
   };
-  
+
   const handleOpen = (id) => {
     // Perform actions for opening
     navigate(`/open/${id}`);
   };
-  
+
   const handleDelete = (id) => {
     // Perform actions for deleting
     console.log(`Deleting item with ID ${id}`);
+
     // Call the function to delete the entry from the backend
-    deleteEntry(id);
-    // Close the confirmation dialog
-    setShowConfirmation(false);
+    fetch(`http://localhost:5000/delete/${id}`, {
+      method: 'DELETE',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to delete entry');
+        }
+        // Optionally, update the UI or fetch data again after deletion
+        console.log(`Deleted item with ID ${id}`);
+        // Close the confirmation dialog
+        setShowConfirmation(false);
+        fetchData();
+      })
+      .catch((error) => {
+        console.error('Error deleting item:', error);
+        // Optionally, handle errors
+      });
   };
 
   const handleSearch = () => {
@@ -85,13 +107,27 @@ function Home() {
       Object.values(item).some(
         (value) =>
           value &&
-          value
-            .toString()
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
+          value.toString().toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
-    setFilteredData(filtered.sort((a, b) => a.vendorName.localeCompare(b.vendorName)));
+    setFilteredData(
+      filtered.sort((a, b) => a.vendorName.localeCompare(b.vendorName))
+    );
+  };
+
+  const handleFilter = () => {
+    let filtered = [...data];
+    if (qapStatusFilter !== '') {
+      filtered = filtered.filter((item) => item.qapStatus === qapStatusFilter);
+    }
+    if (customerClearanceFilter !== '') {
+      filtered = filtered.filter(
+        (item) => item.customerClearance === customerClearanceFilter
+      );
+    }
+    setFilteredData(
+      filtered.sort((a, b) => a.vendorName.localeCompare(b.vendorName))
+    );
   };
 
   // Function to render cards dynamically
@@ -101,7 +137,8 @@ function Home() {
     } else if (error) {
       return <div>Error loading: {error}</div>;
     } else {
-      const cardsToRender = filteredData.length > 0 ? filteredData : data;
+      const cardsToRender =
+        filteredData.length > 0 ? filteredData : data;
       return (
         <div className="card-container">
           {cardsToRender.map((item) => (
@@ -122,7 +159,7 @@ function Home() {
                 <hr />
                 <button className="card-button" onClick={() => handleEdit(item.id)}>Edit</button>
                 <button className="card-button" onClick={() => handleOpen(item.id)}>Open</button>
-                <button className="card-button" onClick={() => handleDelete(item.id)}>Delete</button>
+                <button className="card-button" onClick={() => handleDeleteConfirmation(item.id)}>Delete</button>
               </div>
             </div>
           ))}
@@ -130,8 +167,6 @@ function Home() {
       );
     }
   };
-  
-  
 
   return (
     <>
@@ -141,7 +176,7 @@ function Home() {
           <Link to="/new-entry">
             <button className="entry-button">New Data Entry</button>
           </Link>
-          <div >
+          <div>
             <input
               type="text"
               placeholder="Search..."
@@ -149,23 +184,35 @@ function Home() {
               onChange={(e) => setSearchQuery(e.target.value)}
               id="searchcon"
             />
-              <button onClick={handleSearch} className="searchbtn">
-                <img src="./search-icon.svg" alt="Search icon" className="searchicon"/>
-              </button>
-            </div>
+            <button onClick={handleSearch} className="searchbtn">
+              <img src="./search-icon.svg" alt="Search icon" className="searchicon" />
+            </button>
+          </div>
+          {/* <div>
+            <select value={qapStatusFilter} onChange={(e) => setQapStatusFilter(e.target.value)}>
+              <option value="">QAP Status</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+            <select value={customerClearanceFilter} onChange={(e) => setCustomerClearanceFilter(e.target.value)}>
+              <option value="">Customer Clearance</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+            <button onClick={handleFilter}>Filter</button>
+          </div> */}
         </div>
       </div>
-      {showConfirmation && (
-        <div className="confirmation-box">
-          <p>Are you sure you want to delete this entry?</p>
-          <button onClick={() => handleDelete(deleteItemId)}>Yes</button>
-          <button onClick={handleCancel}>Cancel</button>
-        </div>
-      )}
+      <dialog open={showConfirmation}>
+        <p>Are you sure you want to delete this entry?</p>
+        <button onClick={() => handleDelete(deleteItemId)}>Yes</button>
+        <button onClick={handleCancel}>Cancel</button>
+      </dialog>
       <div className="card-container">
         {/* Render the cards */}
         {renderCards()}
       </div>
+      <BottomNavbar/>
     </>
   );
 }

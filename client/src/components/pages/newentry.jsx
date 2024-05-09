@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import './NewEntry.css';
 import Navbar from '../navbar';
-
+import { useNavigate } from 'react-router-dom';
 
 function NewEntry() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     vendorName: '',
     lntPoNumber: '',
@@ -40,6 +41,8 @@ function NewEntry() {
       .then((response) => response.json())
       .then((data) => {
         console.log('Success:', data);
+        alert('Success')
+        navigate('/')
         // Optionally, handle the response from the server
       })
       .catch((error) => {
