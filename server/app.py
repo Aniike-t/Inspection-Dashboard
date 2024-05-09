@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
 import pandas as pd
+from flask import jsonify
 
 app = Flask(__name__)
 CORS(app)
@@ -54,6 +55,7 @@ def get_data():
             'inspectionCompletedDate': entry.inspectionCompletedDate,
             'customerClearance': entry.customerClearance
         } for entry in data]
+        print(serialized_data)
         return jsonify(serialized_data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -169,4 +171,4 @@ def download_xlsx():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

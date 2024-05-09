@@ -2,7 +2,7 @@
   "name": "inspection-record-app",
   "version": "1.0.1",
   "description": "",
-  "main": "electron.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
@@ -13,10 +13,10 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^30.0.3",
-    "electron-builder": "^22.11.7"
+    "electron-builder": "^22.14.13"
   },
   "build": {
-    "appId": "com.example.yourapp",
+    "appId": "com.aniket.inspectionapp",
     "win": {
       "icon": "appicon/icon.ico"
     }

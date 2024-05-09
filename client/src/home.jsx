@@ -11,15 +11,8 @@ function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState(null);
   const [qapStatusFilter, setQapStatusFilter] = useState('');
   const [customerClearanceFilter, setCustomerClearanceFilter] = useState('');
-
-  const handleDeleteConfirmation = (id) => {
-    setShowConfirmation(true);
-    setDeleteItemId(id);
-  };
 
   useEffect(() => {
     // Fetch data from the backend when the component mounts
@@ -35,35 +28,13 @@ function Home() {
       }
       const jsonData = await response.json();
       setData(jsonData);
+      console.log(data)
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError(error.message);
       setIsLoading(false);
     }
-  };
-
-  const deleteEntry = (id) => {
-    // Call the backend to delete the entry with the specified ID
-    fetch(`http://localhost:5000/delete/${id}`, {
-      method: 'DELETE',
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to delete entry');
-        }
-        console.log(`Deleted item with ID ${id}`);
-        // Optionally, update the UI or fetch data again after deletion
-      })
-      .catch((error) => {
-        console.error('Error deleting item:', error);
-        // Optionally, handle errors
-      });
-  };
-
-  const handleCancel = () => {
-    // Close the confirmation dialog
-    setShowConfirmation(false);
   };
 
   const navigate = useNavigate();
@@ -92,8 +63,6 @@ function Home() {
         }
         // Optionally, update the UI or fetch data again after deletion
         console.log(`Deleted item with ID ${id}`);
-        // Close the confirmation dialog
-        setShowConfirmation(false);
         fetchData();
       })
       .catch((error) => {
@@ -159,7 +128,7 @@ function Home() {
                 <hr />
                 <button className="card-button" onClick={() => handleEdit(item.id)}>Edit</button>
                 <button className="card-button" onClick={() => handleOpen(item.id)}>Open</button>
-                <button className="card-button" onClick={() => handleDeleteConfirmation(item.id)}>Delete</button>
+                <button className="card-button" onClick={() => handleDelete(item.id)}>Delete</button>
               </div>
             </div>
           ))}
@@ -167,7 +136,6 @@ function Home() {
       );
     }
   };
-
   return (
     <>
       <Navbar />
@@ -203,11 +171,6 @@ function Home() {
           </div> */}
         </div>
       </div>
-      <dialog open={showConfirmation}>
-        <p>Are you sure you want to delete this entry?</p>
-        <button onClick={() => handleDelete(deleteItemId)}>Yes</button>
-        <button onClick={handleCancel}>Cancel</button>
-      </dialog>
       <div className="card-container">
         {/* Render the cards */}
         {renderCards()}
